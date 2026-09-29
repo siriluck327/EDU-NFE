@@ -18,7 +18,7 @@
  */
 
 // Change this before deploying: the password for adding media on the website.
-const ADMIN_PIN = 'admin';
+const ADMIN_PIN = 'CHANGE-ME';
 
 const TZ = 'Asia/Bangkok';
 
@@ -80,7 +80,7 @@ const MEDIA_LIMITS = { title: 200, summary: 400, detail: 5000, tags: 300, audien
 const MEDIA_CACHE = 'media-list';
 
 function admin_(body) {
-  if (ADMIN_PIN === 'admin') return json_({ ok: false, error: 'pin-not-set' });
+  if (ADMIN_PIN === 'CHANGE-ME') return json_({ ok: false, error: 'pin-not-set' });
   // Slow down password guessing: after 10 wrong tries, refuse everyone for 10 minutes.
   const cache = CacheService.getScriptCache();
   const fails = Number(cache.get('admin-fails') || 0);
