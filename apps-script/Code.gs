@@ -22,6 +22,15 @@ const ADMIN_PIN = 'CHANGE-ME';
 
 const TZ = 'Asia/Bangkok';
 
+// Run this once from the editor (select "setup", press Run) to grant access to Sheets and Drive,
+// then deploy a new version. It creates the image folder and checks the password is set.
+function setup() {
+  SpreadsheetApp.getActiveSpreadsheet().getName();
+  const folder = mediaFolder_();
+  Logger.log('Image folder: ' + folder.getUrl());
+  Logger.log(ADMIN_PIN === 'CHANGE-ME' ? 'ยังไม่ได้ตั้ง ADMIN_PIN' : 'ตั้ง ADMIN_PIN แล้ว พร้อมใช้งาน');
+}
+
 function doPost(e) {
   try {
     const body = JSON.parse(e.postData.contents);

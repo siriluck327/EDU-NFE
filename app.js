@@ -364,7 +364,7 @@
     var ctrl = window.AbortController ? new AbortController() : null;
     var timer = setTimeout(function () { if (ctrl) ctrl.abort(); }, 10000);
     return fetch(API + '?' + new URLSearchParams(params).toString(), ctrl ? { signal: ctrl.signal } : {})
-      .then(function (r) { return r.json(); })
+      .then(readJson)
       .then(function (j) { clearTimeout(timer); return j; });
   }
   function post(body) {
@@ -374,7 +374,13 @@
       // text/plain avoids a CORS preflight, which Apps Script cannot answer.
       headers: { 'Content-Type': 'text/plain;charset=utf-8' },
       body: JSON.stringify(body),
-    }).then(function (r) { return r.json(); });
+    }).then(readJson);
+  }
+  // Apps Script answers with an HTML page (not JSON) when access or permissions are not set up.
+  function readJson(r) {
+    return r.text().then(function (t) {
+      try { return JSON.parse(t); } catch (e) { throw new Error('not-json'); }
+    });
   }
 
   function loadMedia() {
@@ -471,6 +477,7 @@
       'bad-pin': 'รหัสผ่านไม่ถูกต้อง',
       locked: 'ใส่รหัสผิดหลายครั้ง ระบบล็อกไว้ 10 นาที',
       'no-api': 'ยังไม่ได้ตั้งค่า URL ของ Apps Script ในไฟล์ config.js',
+      'not-json': 'Apps Script ยังตอบกลับไม่ถูกต้อง: ใน Apps Script เลือกฟังก์ชัน setup แล้วกดเรียกใช้เพื่ออนุญาตสิทธิ์ ตรวจว่าผู้มีสิทธิ์เข้าถึงเป็น "ทุกคน" แล้วสร้างเวอร์ชันใหม่',
     }[code] || 'เชื่อมต่อเซิร์ฟเวอร์ไม่ได้ ลองใหม่อีกครั้ง (' + code + ')';
   }
   function setBusy(btn, busy, label) {
